@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pennychest-hsbc"
+version = "0.1.0"
+description = "PennyChest importer for HSBC CIIOM current account and credit card PDF statements"
+requires-python = ">=3.11"
+readme = "README.md"
+dependencies = [
+    "pennychest",
+    "pdfplumber>=0.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "ruff>=0.2.0",
+]
+
+[project.entry-points."pennychest.importers"]
+hsbc = "pennychest_hsbc.importer:HsbcImporter"
+
+[project.urls]
+Source = "https://github.com/pennychest/pennychest-plugins/tree/main/hsbc"
+
+[tool.setuptools]
+packages = ["pennychest_hsbc"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Expected values read best on one line
+"tests/*" = ["E501"]
