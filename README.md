@@ -7,6 +7,7 @@ the same environment.
 | Plugin | Type | What it does |
 |---|---|---|
 | [`hsbc`](hsbc) | Importer | HSBC CIIOM PDF statements (current accounts and credit cards) |
+| [`beancount`](beancount) | Exporter | The ledger in Beancount's plain-text format, for Fava and bean-query |
 
 ## Installing a plugin
 
