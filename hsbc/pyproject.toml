@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
+requires = ["setuptools>=77.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,7 @@ name = "pennychest-hsbc"
 version = "0.1.0"
 description = "PennyChest importer for HSBC CIIOM current account and credit card PDF statements"
 requires-python = ">=3.11"
+license = "MIT"
 readme = "README.md"
 dependencies = [
     "pennychest",

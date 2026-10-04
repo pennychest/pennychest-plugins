@@ -52,3 +52,7 @@ point in `pennychest.importers` or `pennychest.exporters`; see `hsbc/` for a com
 PennyChest's `DESIGN.md` (decision 6) for the interfaces. Add the directory to the matrix in
 `.github/workflows/ci.yml`. Release a plugin by tagging `<plugin>-v<version>`, matching the
 version in its `pyproject.toml`.
+
+## Licence
+
+MIT, the same as PennyChest. See [LICENSE](LICENSE).
