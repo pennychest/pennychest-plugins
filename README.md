@@ -50,8 +50,18 @@ PennyChest's development Compose file mounts this repository at `/plugins`, so y
 Create a directory with a `pyproject.toml` that depends on `pennychest` and registers an entry
 point in `pennychest.importers` or `pennychest.exporters`; see `hsbc/` for a complete example and
 PennyChest's `DESIGN.md` (decision 6) for the interfaces. Add the directory to the matrix in
-`.github/workflows/ci.yml`. Release a plugin by tagging `<plugin>-v<version>`, matching the
-version in its `pyproject.toml`.
+`.github/workflows/ci.yml`. It's released at the version in its `pyproject.toml` when it
+merges.
+
+## Releases
+
+Merging to `main` is the release, as in PennyChest, but each plugin is versioned on its own. The
+Release workflow reads the gitmoji on the commits that touched a plugin's directory since its
+last `<plugin>-v<version>` tag, using the same rules as PennyChest's `.cz.toml`: ✨ and the
+other feature gitmoji release a minor version, 🐛 and the other fix gitmoji a patch, 💥 a minor
+until 1.0.0, and 📝 lists the commit in the next release without making one. For each plugin
+that needs a release it bumps the version in `pyproject.toml`, adds an entry to the plugin's
+`CHANGELOG.md`, tags `<plugin>-v<version>` and creates a GitHub release.
 
 ## Licence
 
