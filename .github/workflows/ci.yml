@@ -19,6 +19,15 @@ env:
   CORE_REPOSITORY: ${{ vars.CORE_REPOSITORY || 'pennychest/pennychest' }}
 
 jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python .github/scripts/check_index.py
+
   test:
     runs-on: ubuntu-latest
     strategy:
