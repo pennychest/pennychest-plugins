@@ -2,6 +2,7 @@
 every plugin is listed, at the version in its pyproject.toml, from that version's tag."""
 
 import json
+import re
 import sys
 import tomllib
 from pathlib import Path
@@ -20,12 +21,16 @@ for pyproject in sorted(root.glob("*/pyproject.toml")):
         continue
     if plugin["version"] != version:
         problems.append(f"{name} is {version}, but plugins.json says {plugin['version']}")
+    # From this repository or a fork of it
     url = (
-        f"https://github.com/pennychest/pennychest-plugins/archive/refs/tags/"
-        f"{directory}-v{version}.zip#subdirectory={directory}"
+        r"https://github\.com/[^/]+/[^/]+/archive/refs/tags/"
+        + re.escape(f"{directory}-v{version}.zip#subdirectory={directory}")
     )
-    if plugin["url"] != url:
-        problems.append(f"{name}'s url should be {url}")
+    if not re.fullmatch(url, plugin["url"]):
+        problems.append(
+            f"{name}'s url should be its {directory}-v{version} tag's archive, "
+            f"with #subdirectory={directory}"
+        )
 
 problems += [f"{name} is in plugins.json but has no directory" for name in listed]
 print("\n".join(problems) or "plugins.json is up to date")

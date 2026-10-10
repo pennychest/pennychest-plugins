@@ -1,8 +1,8 @@
 # PennyChest plugins
 
-Optional plugins for [PennyChest](https://github.com/pennychest/pennychest). Each directory
-is its own Python package, which PennyChest finds through an entry point once it's installed in
-the same environment.
+Optional plugins for [PennyChest](https://github.com/pennychest/pennychest): importers for more
+banks' statements, and exporters to other formats. Each directory is its own Python package,
+which PennyChest finds through an entry point once it's installed.
 
 | Plugin | Type | What it does |
 |---|---|---|
@@ -11,18 +11,35 @@ the same environment.
 
 ## Installing a plugin
 
-With Docker, list plugins as pip requirements when building the PennyChest image:
+In PennyChest, go to **Settings → Plugins** and press **Install**. Plugins from this repository
+are listed there already.
 
-```sh
-docker build \
-  --build-arg PENNYCHEST_PLUGINS="git+https://github.com/pennychest/pennychest-plugins@hsbc-v0.1.0#subdirectory=hsbc" \
-  .
-```
+## Making your own
 
-Pin a tag (`hsbc-v0.1.0`) rather than `main`, so a rebuild doesn't silently pick up a different
-version, and so changing the version busts Docker's build cache.
+1. Fork this repository.
+2. Add a directory for your plugin, with a `pyproject.toml` that depends on `pennychest` and
+   registers an entry point in `pennychest.importers` or `pennychest.exporters`. `hsbc/` is a
+   complete importer and `beancount/` an exporter; the interfaces are in PennyChest's
+   [`imports/base.py`](https://github.com/pennychest/pennychest/blob/main/backend/pennychest/imports/base.py)
+   and [`export/base.py`](https://github.com/pennychest/pennychest/blob/main/backend/pennychest/export/base.py).
+3. Add it to `plugins.json`, which is what PennyChest reads to list plugins:
 
-Outside Docker, `pip install` the same requirement into PennyChest's environment and restart it.
+    ```json
+    {
+      "package": "pennychest-mybank",
+      "name": "My Bank statements",
+      "description": "Import My Bank's PDF statements.",
+      "version": "0.1.0",
+      "url": "https://github.com/<you>/pennychest-plugins/archive/refs/tags/mybank-v0.1.0.zip#subdirectory=mybank"
+    }
+    ```
+
+4. Push, and tag the release: `git tag mybank-v0.1.0 && git push --tags`.
+5. In PennyChest, go to **Settings → Plugins → Add a repository**, paste your fork's link, and
+   install your plugin.
+
+A plugin can run any code on your server and read all your data, so only add repositories you
+trust. To share a plugin with everyone, open a pull request here.
 
 ## Developing
 
@@ -45,13 +62,11 @@ ruff check hsbc
 PennyChest's development Compose file mounts this repository at `/plugins`, so you can also
 `pip install -e /plugins/hsbc` inside its `api` container.
 
-## Adding a plugin
+## Adding a plugin here
 
-Create a directory with a `pyproject.toml` that depends on `pennychest` and registers an entry
-point in `pennychest.importers` or `pennychest.exporters`; see `hsbc/` for a complete example and
-PennyChest's `DESIGN.md` (decision 6) for the interfaces. Add the directory to the matrix in
-`.github/workflows/ci.yml`. It's released at the version in its `pyproject.toml` when it
-merges.
+Follow steps 2 and 3 above, and add the directory to the matrix in `.github/workflows/ci.yml`. CI
+checks that `plugins.json` lists every plugin at the version in its `pyproject.toml`. It's
+released at that version when it merges.
 
 ## Releases
 
@@ -60,8 +75,8 @@ Release workflow reads the gitmoji on the commits that touched a plugin's direct
 last `<plugin>-v<version>` tag, using the same rules as PennyChest's `.cz.toml`: ✨ and the
 other feature gitmoji release a minor version, 🐛 and the other fix gitmoji a patch, 💥 a minor
 until 1.0.0, and 📝 lists the commit in the next release without making one. For each plugin
-that needs a release it bumps the version in `pyproject.toml`, adds an entry to the plugin's
-`CHANGELOG.md`, tags `<plugin>-v<version>` and creates a GitHub release.
+that needs a release it bumps the version in `pyproject.toml` and `plugins.json`, adds an entry
+to the plugin's `CHANGELOG.md`, tags `<plugin>-v<version>` and creates a GitHub release.
 
 ## Licence
 
