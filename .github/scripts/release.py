@@ -7,8 +7,9 @@ decides the bump and the changelog section, and before 1.0.0 a breaking change
 bumps the minor.
 
 A plugin with no tag yet is released at the version already in its
-pyproject.toml. For each release it bumps that version, adds an entry to the
-plugin's CHANGELOG.md, and tags <plugin>-v<version> on one commit for them all.
+pyproject.toml. For each release it bumps that version, points the plugin's entry
+in plugins.json at it, adds an entry to the plugin's CHANGELOG.md, and tags
+<plugin>-v<version> on one commit for them all.
 It writes each release's notes to <notes dir>/<tag>.md and the tags to the
 `tags` step output, and leaves pushing to the workflow.
 
@@ -16,6 +17,7 @@ Usage: release.py <notes dir>
 """
 
 import datetime
+import json
 import os
 import re
 import subprocess
@@ -67,6 +69,29 @@ CHANGELOG_HEADER = """# Changelog
 All notable changes to pennychest-{plugin} are recorded here. Versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 """
+
+
+INDEX = Path("plugins.json")
+# Where releases are downloaded from; a fork's own releases come from the fork.
+REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "pennychest/pennychest-plugins")
+
+
+def download_url(plugin: str, version: str) -> str:
+    return (
+        f"https://github.com/{REPOSITORY}/archive/refs/tags/"
+        f"{plugin}-v{version}.zip#subdirectory={plugin}"
+    )
+
+
+def update_index(package: str, plugin: str, version: str) -> None:
+    """Offer this version in PennyChest's Settings → Plugins."""
+    index = json.loads(INDEX.read_text())
+    entry = next((p for p in index["plugins"] if p["package"] == package), None)
+    if entry is None:
+        raise SystemExit(f"{package} isn't in plugins.json; add it before releasing")
+    entry["version"] = version
+    entry["url"] = download_url(plugin, version)
+    INDEX.write_text(json.dumps(index, indent=2, ensure_ascii=False) + "\n")
 
 
 def git(*args: str) -> str:
@@ -126,7 +151,8 @@ def main() -> None:
 
     for project in sorted(Path().glob("*/pyproject.toml")):
         plugin = project.parent.name
-        version = tomllib.loads(project.read_text())["project"]["version"]
+        metadata = tomllib.loads(project.read_text())["project"]
+        version = metadata["version"]
         tags = git("tag", "--list", f"{plugin}-v*", "--sort=-v:refname").splitlines()
 
         if not tags:
@@ -154,9 +180,10 @@ def main() -> None:
             )
 
         tag = f"{plugin}-v{version}"
+        update_index(metadata["name"], plugin, version)
         add_to_changelog(project.parent / "CHANGELOG.md", plugin, f"v{version} ({today})", notes)
         (notes_dir / f"{tag}.md").write_text(notes + "\n")
-        git("add", str(project), str(project.parent / "CHANGELOG.md"))
+        git("add", str(project), str(project.parent / "CHANGELOG.md"), str(INDEX))
         released.append((plugin, version, tag))
         print(f"{plugin}: releasing v{version}")
 
