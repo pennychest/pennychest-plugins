@@ -1,0 +1,19 @@
+{
+  "name": "PennyChest plugins",
+  "plugins": [
+    {
+      "package": "pennychest-hsbc",
+      "name": "HSBC statements",
+      "description": "Import HSBC CIIOM PDF statements, for current accounts and credit cards.",
+      "version": "0.1.0",
+      "url": "https://github.com/pennychest/pennychest-plugins/archive/refs/tags/hsbc-v0.1.0.zip#subdirectory=hsbc"
+    },
+    {
+      "package": "pennychest-beancount",
+      "name": "Beancount",
+      "description": "Export the ledger in Beancount's plain-text format, for Fava and bean-query.",
+      "version": "0.1.0",
+      "url": "https://github.com/pennychest/pennychest-plugins/archive/refs/tags/beancount-v0.1.0.zip#subdirectory=beancount"
+    }
+  ]
+}
