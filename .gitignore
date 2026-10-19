@@ -1,16 +1,4 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-*.egg
-dist/
-build/
-.eggs/
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
-
-
-# Environments
-.venv/
-.env
+/target/
+/dist/
+# Real statements for checking importers against: never commit
+/statements/

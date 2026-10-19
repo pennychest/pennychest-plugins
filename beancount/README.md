@@ -1,28 +1,21 @@
-# pennychest-beancount
+# Beancount
 
-A [PennyChest](https://github.com/pennychest/pennychest) exporter that writes the whole
-ledger in [Beancount](https://beancount.github.io)'s plain-text format, with your accounts,
-categories and budgets (as Fava `custom "budget"` entries). Open the file in
-[Fava](https://beancount.github.io/fava/) or query it with bean-query.
+Exports the PennyChest ledger in [Beancount](https://beancount.github.io)'s plain-text
+double-entry format, to open in [Fava](https://beancount.github.io/fava/) or query with
+`bean-query`.
 
-PennyChest is already double-entry, so each transaction maps directly onto Beancount postings
-with the same amounts. Confirmed transactions are flagged `*` and ones still to review `!`.
-Account names are adapted to Beancount's rules (e.g. `Assets:Bank:Current:123456_12345678`
-becomes `Assets:Bank:Current:123456-12345678`, with the original kept as a comment).
+- Every account, opened on the date of its first transaction. Account names are adapted to
+  Beancount's rules (each part starts with a capital letter or digit, then letters, digits
+  and hyphens); where a name changes, the PennyChest path follows as a comment.
+- Every transaction, with its postings and exact amounts, so each still balances. Confirmed
+  transactions are flagged `*`, ones still to review `!`, and each carries its
+  `pennychest_id`.
+- Budgets, as Fava's `custom "budget"` entries, from the month each was set.
 
-## Install
+It runs in PennyChest's sandbox: it sees the ledger it's sent, and nothing else.
 
-See the [repository README](../README.md#installing-a-plugin). The requirement is
-
-```
-git+https://github.com/pennychest/pennychest-plugins@<tag-or-commit>#subdirectory=beancount
-```
-
-Settings → Export then offers "Beancount ledger".
-
-## Tests
+## Testing
 
 ```sh
-pip install -e ../pennychest/backend -e "beancount[dev]"
-pytest beancount/tests
+cargo test -p beancount
 ```

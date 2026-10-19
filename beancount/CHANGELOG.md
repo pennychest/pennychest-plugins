@@ -1,8 +1,6 @@
 # Changelog
 
-All notable changes to pennychest-beancount are recorded here. Versions follow
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## 0.2.0
 
-## v0.1.0 (2026-10-06)
-
-The first release.
+- Exports the ledger in Beancount's plain-text format: accounts, transactions and budgets.
+  Runs as a WebAssembly module in PennyChest's sandbox.

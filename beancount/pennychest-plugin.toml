@@ -1,0 +1,8 @@
+name = "beancount"
+version = "0.2.0"
+description = "Export the ledger in Beancount's plain-text format, for Fava and bean-query"
+protocol = 1
+kinds = ["exporter"]
+
+[run]
+wasm = "beancount.wasm"

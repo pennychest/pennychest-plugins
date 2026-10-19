@@ -1,0 +1,17 @@
+[package]
+name = "beancount"
+version = "0.2.0"
+description = "PennyChest exporter for Beancount's plain-text ledger format"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+chrono.workspace = true
+pennychest-plugin.workspace = true
+regex.workspace = true
+
+[lints]
+workspace = true

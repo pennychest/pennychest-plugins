@@ -1,8 +1,7 @@
 # Changelog
 
-All notable changes to pennychest-hsbc are recorded here. Versions follow
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## 0.2.0
 
-## v0.1.0 (2026-10-06)
-
-The first release.
+- Imports HSBC PDF statements: current accounts, savings and credit cards, with the account,
+  period and balances read from the statement. Runs as a WebAssembly module in PennyChest's
+  sandbox.
