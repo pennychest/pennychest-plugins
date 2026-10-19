@@ -1,0 +1,8 @@
+name = "hsbc"
+version = "0.2.0"
+description = "HSBC CIIOM PDF statements, for current accounts and credit cards"
+protocol = 1
+kinds = ["importer"]
+
+[run]
+wasm = "hsbc.wasm"

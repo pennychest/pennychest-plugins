@@ -1,27 +1,34 @@
-# pennychest-hsbc
+# HSBC statements
 
-A [PennyChest](https://github.com/pennychest/pennychest) importer for HSBC CIIOM PDF statements: current accounts
-(Advance, Premier, savers) and credit cards. It reads each statement's sort code and account
-number, or the card's last four digits, so the import page can suggest the right account, and
-picks up the statement period and opening and closing balances.
+Imports HSBC PDF statements into PennyChest: current accounts, savings and credit cards.
 
-## Install
+- Recognises an HSBC statement from the PDF, and whether it's a current account or a credit
+  card from its wording.
+- Reads the account from the statement itself: the sort code and account number, or a card's
+  last four digits (never the full card number).
+- Reads the statement's period and opening and closing balances, so PennyChest can suggest
+  the account and its opening balance.
+- Reads every transaction, including descriptions over several lines and transactions that
+  carry over to the next page. Contactless and in-app payments are noted as such.
 
-See the [repository README](../README.md#installing-a-plugin). The requirement is
+It runs in PennyChest's sandbox: it sees only the statement it's sent.
 
-```
-git+https://github.com/pennychest/pennychest-plugins@hsbc-v0.1.0#subdirectory=hsbc
-```
+## How it reads statements
 
-The import page then lists "HSBC PDF statements" among the supported formats.
+HSBC statements are text laid out in columns, with no table borders. The importer reads where
+each word is on the page, finds the column headings ("Paid out", "Paid in", "Balance", or
+"Received by us", "Transaction date", "Details", "Amount"), and puts each word in its column.
 
-## Tests
+## Testing
 
 ```sh
-pip install -e ../pennychest/backend -e "hsbc[dev]"
-pytest hsbc/tests
+cargo test -p hsbc
 ```
 
-Most tests run against real statements, which aren't in the repository. Point
-`HSBC_TEST_PDF_DIR` at a directory with `current_account/` and `credit_card/` subdirectories of
-your own PDFs to run them; without it they're skipped.
+The tests use made-up statements in HSBC's layout (`tests/fixtures`, made by
+`make_statements.py`). To check against real statements as well, put them in
+`current_account/` and `credit_card/` folders somewhere outside the repository and run
+
+```sh
+HSBC_TEST_PDF_DIR=/path/to/statements cargo test -p hsbc
+```

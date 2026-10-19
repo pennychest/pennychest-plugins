@@ -1,0 +1,31 @@
+[workspace]
+members = ["beancount", "hsbc"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/pennychest/pennychest-plugins"
+rust-version = "1.97"
+
+[workspace.dependencies]
+# The plugin SDK, from the PennyChest repository.
+pennychest-plugin = { git = "https://github.com/pennychest/pennychest", rev = "d7e0671847ae515aec36781035cd9dcb8c9c6a67" }
+chrono = { version = "0.4", default-features = false }
+pdf-extract = "0.12"
+regex = "1"
+serde_json = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+
+# Plugins are downloaded and compiled when they're installed: small is worth more than fast to
+# build.
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
